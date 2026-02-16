@@ -1,27 +1,35 @@
 import sys
 sys.stdin = open('input.txt')
+# 입력을 위해 input 설정
+N = int(sys.stdin.readline())
+distance = list(map(int, sys.stdin.readline().split()))
+gas_prices = list(map(int, sys.stdin.readline().split()))
 
-"""
-어... 가장 가격이 낮은 도시까지 최소한으로 주유한 다음에
-가장 낮은 가격의 기름을 파는 도시에 도착하면 끝까지 갈만한 기름을 충전한다... 이게 맞나?
-"""
+total_gas = 0
 
-N = int(input()) # 도시의 개수 (2 ≤ N ≤ 100,000)
-distance = list(map(int, input().split()))
-gas_prices = list(map(int, input().split()))
+# 1. 마지막 도시를 제외하고 전체에서 가장 최저가인 기름값 찾기
+# (사용자님의 기존 로직 유지)
+min_gas_price = min(gas_prices[:-1])
 
-total_gas = 0 # 현재 남아있는 가스, 전체 사용한 가스(필요 없을 듯)
+# 2. distance를 뒤집어서 pop()이 효율적으로(뒤에서부터) 일어나도록 준비
+# 파이썬의 pop()은 마지막 요소를 뺄 때 가장 빠르기 때문입니다.
+distance.reverse()
 
-min_gas_price = min(gas_prices[:-1]) # 마지막 도시를 제외하고 가장 최저가의 기름을 파는 도시를 검색
-print(min_gas_price)
-# 거리:  2 3 1
-# 도시: 5 2 4 1
-for idx in range(N-1): # 도시의 개수만큼 반복 -> 마지막에 도달하면 도착지인걸로 간주함
-    if gas_prices[idx] != min_gas_price:
-        total_gas += gas_prices[idx] * distance[idx-1]
-        distance.pop()
+for idx in range(N - 1):
+    # 현재 도시의 기름값
+    current_price = gas_prices[idx]
+
+    # 지금 도시가 전체 최저가 주유소라면?
+    if current_price == min_gas_price:
+        # 남은 거리를 다 더해서 현재 최저가로 한꺼번에 계산
+        # distance가 뒤집혀 있으므로 그대로 sum 하면 됩니다.
+        total_gas += current_price * sum(distance)
+        break  # 끝까지 다 채웠으므로 반복문 종료
+
     else:
-        print("최저가 도시에 도착!")
-        tmp_gas = sum(list(map(lambda v: v * min_gas_price, distance)))
+        # 최저가 도시가 아니라면 다음 도시까지만 갈 만큼만 충전
+        # distance.pop()은 뒤집힌 리스트의 마지막(즉, 원래의 앞부분)을 꺼냅니다.
+        d = distance.pop()
+        total_gas += current_price * d
 
 print(total_gas)
