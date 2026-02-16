@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual Environment
+venv/
+.env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Input test files
+input.txt
+output.txt
+test.txt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Coverage / cache
+.cache/
+.pytest_cache/
+
+# Compiled
+*.out
+*.exe
