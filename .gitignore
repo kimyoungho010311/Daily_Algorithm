@@ -26,9 +26,9 @@ desktop.ini
 *.log
 
 # Input test files
-input.txt
-output.txt
-test.txt
+#input.txt
+#output.txt
+#test.txt
 
 # Jupyter
 .ipynb_checkpoints/
