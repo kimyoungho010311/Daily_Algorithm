@@ -33,65 +33,65 @@ def merge():
     pass
 
 T = int(input())
-T = 1 # For Test...
+# T = 1 # For Test...
 
 for tc in range(1, T+1):
     # 7, 2, 9
     N, M, K = map(int, input().split()) # 셀의 수, 격리 시간, 군집의 개수
     micros = [] # 군집들의 정보
+    result = 0
 
     for _ in range(K):
         I, J, count, direction = map(int, input().split()) # 세로, 가로, 미생물 수, 이동방향
         # 상: 1, 하: 2, 좌: 3, 우: 4
         micros.append([I, J, count, direction])
 
-    # 가장자리를 약품질해서 미생물을 가둔다.
-    mat = [[1] * N for _ in range(N)] # N: 7
-    for i in range(N):
-        for j in range(N):
-            if 0 < i < N-1 and 0 < j < N-1:
-                mat[i][j] = 0
+    # matrix 를 사용해서 방향전환, 합치기 로직을 구현하기는 매우 까다롭다.
+    # 방향 전환 로직이야 어떻게 구현한다고 해도
+    # 병합되는 로직은 구현하기 힘들다.
+    # 따라서 micros 자체에 인덱스값 미생물 값을 다뤄서
+    # 최종적으로 합산하여 구하는 방식으로 한다.
 
-    # 여기 아래 반복문도 딱히 필요 없을 듯?
-    for idx in range(K):
-        mat[micros[idx][0]][micros[idx][1]] = micros[idx][2]
+    for _ in range(M):
+        # 모든 군집 이동 및 가장자리 처리
+        for m in micros:
+            m[0] += di[m[3]]
+            m[1] += dj[m[3]]
 
-    mat_copy = [row[:] for row in mat]
+            if m[0] == 0 or m[0] == N-1 or m[1] == 0 or m[1] == N-1:
+                m[2] //= 2 # 미생물 반토막
+                # 방향 반전
+                if m[3] == 1: m[3] = 2
+                elif m[3] == 2: m[3] = 1
+                elif m[3] == 3: m[3] = 4
+                elif m[3] == 4: m[3] = 3
+        # 이후 합치기 로직 작성!
+        micros.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
 
-    # 이렇게 한번에 모든 군집에 적용할려고 하지말고
-    # 하나의 군집을 먼저 정한다음에 해당 군집만 움직이도록 해보자
+        new_micros = []
+        if not micros: continue
 
-    # 먼저 진행방향으로 움직이는 로직 설계해 보자
+        # 첫 번째 군집을 기준으로 시작
+        current = micros[0]
 
-    for _ in range(M): # M 시간동안 M번 움직여야 함
-        for idx in range(K): # 각 군집을 반복적으로 해야하기 때문에 micros 배열을 순회한다.
-            direction = micros[idx][3] # 각 군집의 이동 방향을 받은 다음에
-            ni, nj = micros[idx][0] + di[direction], micros[idx][1] + dj[direction]
+        for i in range(1, len(micros)):
+            # 다음 군집과 좌표가 같다면? 합치기!
+            if micros[i][0] == current[0] and micros[i][1] == current[1]:
+                current[2] += micros[i][2]
+                # 이미 정렬을 했기 때문에, current의 방향이 무조건 가장 큰 군집의 방향임!
+            else:
+                # 좌표가 다르면 지금까지 합친 군집을 저장하고 새로 시작
+                new_micros.append(current)
+                current = micros[i]
 
-            if 0 < ni < N-1 and 0 < nj < N-1 and mat_copy[ni][nj] != 1:
-                mat_copy[micros[idx][0]][micros[idx][1]] = 0 # 지금 있었던 위치의 값을 초기화하고
-                mat_copy[ni][nj] = micros[idx][2] # 다음 위치에 미생물 값을 입력한다.
-            else: # 만약 약품에 닿는다면
-                # print(micros[idx][2])
-                micros[idx][2] = int(micros[idx][2] / 2) # 2로 나눈 후 소숫점 이하를 버림 한 값이 되고
-                print(micros[idx][2])
-                if direction == 1: direction = 2
-                elif direction == 2: direction = 1
-                elif direction == 3: direction = 4
-                elif direction == 4: direction = 3
+        new_micros.append(current)  # 마지막 군집 추가
+        micros = new_micros  # 업데이트
 
-                nni, nnj = micros[idx][0] + di[direction], micros[idx][1] + dj[direction]
-                if 0 < nni < N-1 and 0 < nnj < N-1 and mat_copy[nni][nnj] != 1:
-                    mat_copy[nni][nnj] = micros[idx][2]
+    for idx in range(len(micros)):
+        result += micros[idx][2]
 
-    # for row in mat_copy:
-    #     print(row)
-
-
-
-
-
-
+    # print(micros)
+    print(f"#{tc} {result}")
 
 
 
