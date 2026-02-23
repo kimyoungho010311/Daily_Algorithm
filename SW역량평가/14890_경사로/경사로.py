@@ -23,13 +23,47 @@ N * N 크기의 지도
 3. 낮은 지점의 칸이 높낮이가 다르고 길이가 L이 아닌 경우
 4. **경사로가 범위를** 벗어나는 경우
 """
+def check_line(line, N, L):
+    """
+    하나의 길을 받아서 지나갈 수 있는지 Boolean 값을 반환
+    """
+
+    # 경사로 설치 여부를 기록 ( 중복 설치 방지 ) <- 이게 왜 필요하지
+    used = [False] * N
+
+    for i in range(N-1):
+        # 높이가 같은 경우 계속 전진
+        if line[i] == line[i+1]:
+            continue
+
+        # 높이 차이가 1보다 큰 경우 -> 어떤 경우에도 불가능
+        if abs(line[i] - line[i+1]) > 1:
+            return False
+
+        # 오르막길 (현재 < 다음) -> 지나온 길에 경사로 설치한다.
+        if line[i] < line[i+1]:
+            # 현재 칸(i)를 포함하여 왼쪽으로 L칸 확인
+            for j in range(L):
+                # 범위를 벗어나거나, 높이가 다르거나, 이미 경사로가 있다면
+                if i - j < 0 or line[i] != line[i-j] or used[i-j]:
+                    return False
+                used[i-j] = True # 경사로 설치
+
+        # 내리막길 (현재 > 다음) -> 앞으로 올 길에 설치한다.
+        else:
+            # 다음 칸을 포함하여 오른쪽으로 L칸 확인
+            for j in range(1, L + 1):
+                if i + j >= N or line[i+1] != line[i +j] or used[i+j]:
+                    return False
+                used[i+j] = True
+    return True
 
 # 지도의 크기, 경사로 길이
 N, L = map(int, input().split()) # 6 2
 
-arr = [list(map(int, input().split())) for _ in range(N)]
+board = [list(map(int, input().split())) for _ in range(N)]
 
-cnt = 0 # 길의 개수
+ans = 0 # 길의 개수
 
 # 일단 완전 탐색으로 해야 할 듯
 # 행탐색, 열탐색 각각 두번 해야한다.
@@ -37,30 +71,13 @@ cnt = 0 # 길의 개수
 # 1번같은 경우에는 curr 와 next 계속 비교해가면서 같으면 +=1 하고
 # 다를 경우 break 걸고 경사로 로직 적용해봐야 할듯
 
-for idx in range(N): # 가로 탐색
-    tmp = arr[idx:][0]
-    print(tmp)
-    # 뭔가 이 반복문이 문제인거같아 개선점이 필요함 정확히 내가 원하는대로 이 반복문을 탈출하고싶은데.. 플래그 변수를 사용해야하나
-    for index in range(len(tmp)-1):
-        curr_elem = tmp[index]
-        next_elem = tmp[index+1]
+for row in board:
+    if check_line(row, N, L):
+        ans += 1
 
-        # curr와 next가 다른게 있으면 차이를 검사하고
-        # 만약 차가 1이라면 그곳에 L길이의 경사로가 들어가는지 로직을 검사한다.
-        # 경사로가 들어가는 공간이 없으면 그냥 pass
-        if curr_elem != next_elem:
-            diff = abs(curr_elem - next_elem)
-            print(diff)
-
-
-        # 만약 끝까지 순회했다면 경사로가 필요 없으므로
-        # 최종 결과에 += 1한다.
-
-
-print()
 # 세로 탐색 하기 위해서 배열을 90도 회전한다.
-arr = [list(row) for row in zip(*arr[::-1])]
+for col in zip(*board):
+    if check_line(col, N, L):
+        ans += 1
 
-for idx in range(N):
-    tmp = arr[idx:][0]
-    pass
+print(ans)
