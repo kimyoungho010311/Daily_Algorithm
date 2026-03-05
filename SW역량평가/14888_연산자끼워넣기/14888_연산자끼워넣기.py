@@ -1,4 +1,5 @@
 import sys
+from itertools import permutations
 sys.stdin = open('input.txt')
 input = sys.stdin.readline
 '''
@@ -13,45 +14,39 @@ N-1 개의 연산자가 주어진다.
 
 최대와 최소를 구해라
 '''
-from itertools import permutations
 
 # 수의 개수
 N = int(input())
 arr = list(map(int, input().split()))
-# 나중에 연산할거임
-# + - * /
 operations = list(map(int, input().split()))
-opers = []
-max_val, min_val = float('-inf'), float('inf')
 
-# 일단 중복되는 연산자가 없는 경우만 고려해본다.
-for idx in range(4):
-    if idx == 0:
-        for _ in range(operations[0]): opers.append('+')
-    elif idx == 1:
-        for _ in range(operations[1]): opers.append('-')
-    elif idx == 2:
-        for _ in range(operations[2]): opers.append('*')
-    else:
-        for _ in range(operations[3]): opers.append('/')
-all_opers = set(list(permutations(opers, len(opers))))
+oper_list = []
+op_symbols = ['+', '-', '*', '/']
+for i in range(4):
+    for _ in range(operations[i]):
+        oper_list.append(op_symbols[i])
 
-for opers in all_opers:
-    tmp = arr[0]
-    for idx, oper in enumerate(opers):
+max_val = float('-inf')
+min_val = float('inf')
+
+# 중복제거를 위해 set 활용
+all_opers_comb = set(list(permutations(oper_list, len(oper_list))))
+
+for oper_list in all_opers_comb:
+    result = arr[0]
+    for idx, oper in enumerate(oper_list):
         if oper == '+':
-            tmp += arr[idx+1]
+            result += arr[idx + 1]
         elif oper == '-':
-            tmp -= arr[idx+1]
+            result -= arr[idx + 1]
         elif oper == '*':
-            tmp *= arr[idx+1]
+            result *= arr[idx + 1]
         else:
-            tmp = int(tmp/arr[idx+1])
-        # print(tmp)
-    if max_val < tmp:
-        max_val = tmp
-    if min_val > tmp:
-        min_val = tmp
+            result = int(result / arr[idx + 1])
+    if result > max_val:
+        max_val = result
+    if result < min_val:
+        min_val = result
 
 print(max_val)
 print(min_val)
