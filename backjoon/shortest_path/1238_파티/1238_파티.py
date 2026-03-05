@@ -47,17 +47,23 @@ for _ in range(M):
 # 같은 자리 원소들끼리 합 한다음 max값 구하면 끝날듯
 # 각 학생별로 모두 다익스트라 돌려야하나?
 
-for start in range(1, N + 1):
-    # 각 시작마을에서 파티 장소까지 가는 거리 구하기
-    go_dist_list = dijkstra(start, N, adj)
-    go_val = go_dist_list[X] # 파티장소까지 가는 거리
+for start in range(1, N+1): # 각 마을별로 헉생 개인의 시작지점을 정한다.
+    # 갈때 다익스트라 돌리고
+    # 반환값을 go_dist에 저장하고
+    # print(f"{start}번 마을에서 시작!")
+    # print(f"도착지는 {X+1}번 마을!")
+    go_dist = dijkstra(start, N, adj)
+    # print(go_dist)
 
-    come_dist_list = dijkstra(X, N, adj) # 집으로 돌아오는 거리
-    come_val = come_dist_list[start]
-
-    # 두 값을 더해 최댓값 갱신
-    total_time = go_val + come_val
-    if max_dist < total_time:
-        max_dist = total_time
-
+    # 올떄 다익스트라 돌리고
+    # 반환값을 come_dist에 저장하고
+    come_dist = dijkstra(X, N, adj)
+    # print(come_dist)
+    # 단순히 같은 자리끼리 더하는게 아니라
+    # 왔다 갔다 값을 더해야한다.
+    tmp = go_dist[X] + come_dist[start]
+    # print(tmp)
+    # print()
+    if max_dist < tmp:
+        max_dist = tmp
 print(max_dist)
