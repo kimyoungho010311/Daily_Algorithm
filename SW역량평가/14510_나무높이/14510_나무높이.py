@@ -1,63 +1,41 @@
 import sys
 sys.stdin = open('input.txt')
-
+"""
+핵심로직은 며칠이 걸릴까?가 아닌 1이 총 몇개 필요하고 2가 총 몇개 필요한가? 이다.
+그리고 그 두 수의 균형을 맞추는게 핵심이다.
+"""
 T = int(input())
-T = 10
-
-# 뭔가 물 안주는 날 정하는게 첫쩃날 둘쨋날만 고려하면 될듯
-
-def water_trees(start_day, copy_trees_height):
-    while True:
-
-        # 가장 작은 나무를 찾고
-        min_tree = min(copy_trees_height)
-
-        if min_tree == max_tree:
-            break
-
-        # 짝수 홀수에 따라 다른 높이가 커지도록 한다.
-        if start_day // 2 == 0:
-            is_odd = False
-        elif start_day // 2 != 0:
-            is_odd = True
-
-        if is_odd: # 홀수이면
-            copy_trees_height[copy_trees_height.index(min_tree)] += 1
-        if not is_odd:
-            copy_trees_height[copy_trees_height.index(min_tree)] += 2
-
-        start_day += 1
-    return start_day
 
 for tc in range(1, T+1):
-    # 나무의 개수
+    # 나무의 수
     N = int(input())
-    # 나무들의 높이
-    trees_height = list(map(int, input().split()))
-    copy_trees_height = trees_height[:]
+    trees = list(map(int, input().split()))
 
-    # 가장 큰 나무를 목표로 설정한다.
-    max_tree = max(trees_height)
-    # print(trees_height)
-    is_odd = True
-    min_day, start_day = float('inf'), 0
+    odd, even = 0, 0
 
-    # 일단 while문으로 시작해보고
-    # 중간에 break 로직을 구해본다.
-    # 백트래킹?
-    start_day = water_trees(start_day, copy_trees_height)
+    max_h = max(trees)
+    # 각 나무에 대해 max_h - h 를 계산한다.
+    for tree in trees:
+        # 각 나무마다 얼만큼 성장이 필요한지 계산
+        # 만약 1 -> 7가 되기 위해서는 2, 2, 2, 1 이 필요함
+        h = max_h - tree
+        even += h // 2
+        odd += h % 2
 
-    if min_day > start_day:
-        min_day = start_day
-    print(f"first min day: {min_day}")
-    # 여기서 이제 첫 쨋날은 물 안주는걸로 해본다.
-    copy_trees_height = trees_height[:]
-    start_day = 1
-    start_day = water_trees(start_day, copy_trees_height)
+    # 핵심 로직인 두 수의 균형을 맞추기
+    # 만약 짝수날이 너무 많으면 필연적으로 쉬는날(홀수)가 많아진다.
+    # 그러면 전체 일수가 줄어듬으로 최대한 많이 짝수를 홀수로 나눈다!
+    while even > odd + 1: # 멈추는 순간이 바로 even > odd + 1인 순간
+        even -= 1
+        odd += 2
+        # 왜 +1인가?
+        # -> odd와 even이 같거나, odd가 1개 더 많은 게 최적이기 때문!
 
-    if min_day > start_day:
-        min_day = start_day
-    print(f"second min day: {min_day}")
+    if odd == even:
+        result = odd + even
+    elif odd > even: # 1이 더 많음
+        result = odd * 2 - 1
+    else: # odd < even # 2가 더 많음
+        result = even * 2
 
-    # print(trees_height)
-    print(f"#{tc} {min_day}")
+    print(f"#{tc} {result}")
