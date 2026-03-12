@@ -20,16 +20,13 @@ for _ in range(N):
 # [1, 4]
 meetings.sort(key=lambda x: (x[1], x[0]))
 
-start_meeting = meetings[0]
-meetings = meetings[1:]
-count = 1
+count = 0
+last_end_time = 0 # 마지막 회의가 끝난 시간
 
-
-for meeting in meetings:
-    start, end = meeting
-
-    if start_meeting[1] <= start:
-        start_meeting = meeting
+for start, end in meetings:
+    
+    if start >= last_end_time:
         count += 1
+        last_end_time = end
 
 print(count)
