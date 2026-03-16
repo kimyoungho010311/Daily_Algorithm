@@ -24,63 +24,74 @@ RULES
 di = [0, -1, 1, 0, 0]
 dj = [0, 0, 0, -1, 1]
 
-T = int(input())
+# 경계에 만나면 작동되는 함수
+def reach_border():
+    pass
 
-for tc in range(1, T + 1):
+# 한곳에 만나면 작동되는 함수
+def merge():
+    pass
+
+T = int(input())
+# T = 1 # For Test...
+
+for tc in range(1, T+1):
+    # 7, 2, 9
     N, M, K = map(int, input().split()) # 셀의 수, 격리 시간, 군집의 개수
-    micros = []
+    micros = [] # 군집들의 정보
     result = 0
+
     for _ in range(K):
-        I, J, count, direction = map(int, input().split())
+        I, J, count, direction = map(int, input().split()) # 세로, 가로, 미생물 수, 이동방향
         # 상: 1, 하: 2, 좌: 3, 우: 4
         micros.append([I, J, count, direction])
 
-    for _ in range(M):
+    # matrix 를 사용해서 방향전환, 합치기 로직을 구현하기는 매우 까다롭다.
+    # 방향 전환 로직이야 어떻게 구현한다고 해도
+    # 병합되는 로직은 구현하기 힘들다.
+    # 따라서 micros 자체에 인덱스값 미생물 값을 다뤄서
+    # 최종적으로 합산하여 구하는 방식으로 한다.
 
+    for _ in range(M):
         # 모든 군집 이동 및 가장자리 처리
         for m in micros:
-            # micros에서 주어진 방향대로 벽을 만날 때 까지 전진한다.
             m[0] += di[m[3]]
             m[1] += dj[m[3]]
 
-            # 그러다 만약 벽을 만났을 경우 반띵당하고 방향을 반대로 전환한다.
-            if m[0] == 0 or m[0] == N - 1 or m[1] == 0 or m[1] == N - 1:
-                m[2] //= 2 # 만약 미생물이 벽에 닿으면 반토막낸다.
-
+            if m[0] == 0 or m[0] == N-1 or m[1] == 0 or m[1] == N-1:
+                m[2] //= 2 # 미생물 반토막
                 # 방향 반전
                 if m[3] == 1: m[3] = 2
                 elif m[3] == 2: m[3] = 1
                 elif m[3] == 3: m[3] = 4
                 elif m[3] == 4: m[3] = 3
-
-        # 여기 아래는 전부 같은 위치에 있을시에 합치는 로직이다.
-        # 아래처럼 정렬을 하게 된다면 자연스럽게 같은 위치에 (x[0], x[1]) 있는 군집끼리 모이게 될것이고
-        # reverse를 하면 가장 큰 군집이 앞에 나오게 될 것이다.
+        # 이후 합치기 로직 작성!
         micros.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
 
         new_micros = []
-        # 아래는 약간의 안전장치 느낌이다.
-        # 만약 micros 리스트가 비어있는데 64번째 코드를 실행하면 에러가 남으로
-        # 리스트가 비어있으면 넘어가 오류를 피한다.
         if not micros: continue
 
         # 첫 번째 군집을 기준으로 시작
-        current = micros[0] # 같은 위치에서 가장 큰 군집이 선택된다.
+        current = micros[0]
 
         for i in range(1, len(micros)):
-            # 다음 군집과 좌표가 같다면 합치기
+            # 다음 군집과 좌표가 같다면? 합치기!
             if micros[i][0] == current[0] and micros[i][1] == current[1]:
                 current[2] += micros[i][2]
-                # 이미 정렬을 했기 때문에, current의 방향이 무조건 가장 큰 군집의 방향임
+                # 이미 정렬을 했기 때문에, current의 방향이 무조건 가장 큰 군집의 방향임!
             else:
                 # 좌표가 다르면 지금까지 합친 군집을 저장하고 새로 시작
                 new_micros.append(current)
                 current = micros[i]
 
-        new_micros.append(current)
-        micros = new_micros
+        new_micros.append(current)  # 마지막 군집 추가
+        micros = new_micros  # 업데이트
 
     for idx in range(len(micros)):
         result += micros[idx][2]
 
+    # print(micros)
     print(f"#{tc} {result}")
+
+
+
