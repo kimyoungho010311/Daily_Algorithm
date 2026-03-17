@@ -1,20 +1,18 @@
 import sys
 sys.stdin = open('input.txt')
-"""
-
-
-"""
 
 T = int(input())
 
 for tc in range(1, T+1):
     N = int(input())
-    trees = list(map(int, input().split()))
+    trees = list(map(int,input().split()))
 
     max_h = max(trees)
     odd, even = 0, 0
+
     for tree in trees:
         h = max_h - tree
+
         even += h // 2
         odd += h % 2
 
@@ -27,5 +25,6 @@ for tc in range(1, T+1):
     elif even > odd:
         result = even * 2
     else:
-        result = odd * 2 + 1
+        result = odd * 2 - 1
+
     print(f"#{tc} {result}")
