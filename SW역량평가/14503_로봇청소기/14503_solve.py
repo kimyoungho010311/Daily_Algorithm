@@ -1,6 +1,6 @@
 import sys
 sys.stdin = open('input.txt')
-
+# 북 동 남 서
 dr = [-1, 0, 1, 0]
 dc = [0, 1, 0, -1]
 
@@ -41,8 +41,5 @@ while True:
         nr, nc = r + dr[d], c + dc[d]
         if 0 <= nr < N and 0 <= nc < M and room[nr][nc] == 0:
             r, c = nr, nc
-
-        for row in room:
-            print(row)
 
 print(cleaned_count)
