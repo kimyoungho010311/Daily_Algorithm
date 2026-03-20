@@ -27,7 +27,6 @@ for tc in range(1, T+1):
     groups = []
 
     for idx, i in enumerate(range(0, n, group_size)):
-        # [['1', 'B', '3'], ['B', '3', 'B'], ['8', '1', 'F'], ['7', '5', 'E']]
         groups.append(nums[i : i + group_size]) #
 
     q0 = deque(groups[0])
@@ -36,22 +35,15 @@ for tc in range(1, T+1):
     q3 = deque(groups[3])
 
     ans = []
-    # print(f"Before: {q0}, {q1}, {q2}, {q3}")
-    for i in range(4):
-        # tmp = q0.pop()
-        q1.insert(0, q0.pop())
-        # tmp = q1.pop()
-        q2.insert(0, q1.pop())
-        # tmp = q2.pop()
-        q3.insert(0, q2.pop())
-        # tmp = q3.pop()
-        q0.insert(0, q3.pop())
+    for i in range(group_size):
+        tmp = q3.pop()
 
-        # print(f"{list(q0)}, {list(q1)}, {list(q2)}, {list(q3)}")
+        q3.appendleft(q2.pop())
+        q2.appendleft(q1.pop())
+        q1.appendleft(q0.pop())
+        q0.appendleft(tmp)
+
         qs = [q0, q1, q2, q3]
-        # [deque(['E', '1', 'B']), deque(['3', 'B', '3']), deque(['B', '8', '1']), deque(['F', '7', '5'])]
-        # [deque(['5', 'E', '1']), deque(['B', '3', 'B']), deque(['3', 'B', '8']), deque(['1', 'F', '7'])]
-        # [deque(['7', '5', 'E']), deque(['1', 'B', '3']), deque(['B', '3', 'B']), deque(['8', '1', 'F'])]
 
         for q in qs:
             tmp = ''
@@ -67,33 +59,4 @@ for tc in range(1, T+1):
     final.sort(reverse=True)
     # print(final)
     print(f"#{tc} {final[K-1]}")
-
-
-"""
-F535/86D7/6286/B2D8
-
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
