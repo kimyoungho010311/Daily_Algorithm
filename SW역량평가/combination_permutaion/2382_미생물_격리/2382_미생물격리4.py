@@ -6,11 +6,10 @@ T = int(input())
 di = [0, -1, 1, 0, 0]
 dj = [0, 0, 0, -1, 1]
 
-for tc in range(1, T+1):
-    # 크기, 격리 시간, 군집 수
-    N, M, K = map(int, input().split())
-
+for tc in range(1, T + 1):
+    N, M, K = map(int, input().split()) # 셀의 수, 격리 시간, 군집의 개수
     micros = []
+    result = 0
 
     for _ in range(K):
         I, J, count, direction = map(int, input().split())
@@ -23,12 +22,13 @@ for tc in range(1, T+1):
 
             if m[0] == 0 or m[0] == N - 1 or m[1] == 0 or m[1] == N - 1:
                 m[2] //= 2
+
                 if m[3] == 1: m[3] = 2
                 elif m[3] == 2: m[3] = 1
                 elif m[3] == 3: m[3] = 4
                 elif m[3] == 4: m[3] = 3
 
-        micros.sort(key=lambda x: (x[0], x[1], x[2]), reverse=True)
+        micros.sort(key= lambda x: (x[0], x[1], x[2]), reverse=True)
 
         new_micros = []
         current = micros[0]

@@ -4,12 +4,10 @@ sys.stdin = open('input.txt')
 T = int(input())
 
 for tc in range(1, T+1):
-    # 나무의 수
     N = int(input())
     trees = list(map(int, input().split()))
 
     max_h = max(trees)
-
     odd, even = 0, 0
 
     for tree in trees:
@@ -28,5 +26,6 @@ for tc in range(1, T+1):
         result = odd * 2 - 1
     else:
         result = even * 2
+
 
     print(f"#{tc} {result}")
