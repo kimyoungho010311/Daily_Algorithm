@@ -37,46 +37,46 @@ def DFS(i, j):
     return if len(visited_cafe) > 0 visited_cafe else: -1
 """
 
-# 왼쪽위, 오른쪽위, 왼쪽아래, 오른쪽아래
-di = [-1, -1, 1, 1]
-dj = [-1, 1, -1, 1]
+# 오른쪽아래, 왼쪽아래, 왼쪽위, 오른쪽위
+di = [1, 1, -1, -1]
+dj = [1, -1, -1, 1]
 
-def DFS(i, j):
-    global visited_cafe
+def DFS(i, j, d):
+    global max_ans
 
-    goal_i, goal_j = i, j # 다시 돌아와야 하는 목적지
-    visited[i][j] = True
+    # 이동 (직진 / 꺽기)
+    # 현재 방향부터 다음 방향까지만 고려(사각형이므로 뒤로 갈 필요가 없다.)
+    # 기존의 방식대로 4번을 반복한다면 이상한 모앙이 된다.
+    # 하지만 d, d+1만 사용한다면 직진하고, 꺽고 밖에 없으므로 사각형이 만들어진다.
+    
+    for next_d in range(d, d + 2):
+        if next_d < 4: # 다음 방향이 di, dj의 인덱스를 벗어나지 않도록 하는 안전장치
+            ni, nj = i + di[next_d], j + dj[next_d]
 
-    for k in range(4):
-        ni, nj = i + di[k], j + dj[k]
+            # 사각형 완성 체크 (마지막 방향에서 시작점으로 돌아온 경우)
+            if ni == si and nj == sj: # 만약 다음 이동 지점이 시작지점이라면 사각형이 완성됬다고 판단한다.
+                #if len(visited_cafe) >= 4:
+                max_ans = max(max_ans, len(visited_cafe))
+                return
 
-        if ni == goal_i and nj == goal_j: # 목적지에 다시 돌아왔음으로 DFS를 반환한다.
-            return visited_cafe
-
-        # 지도 안에 있어야 하고 방문한 적이 없고 똑같은 메뉴가 아니라면
-        if 0 <= ni < N and 0 <= nj < N and not visited[ni][nj] and board[ni][nj] not in visited_cafe:
-            visited_cafe.append(board[ni][nj])
-            DFS(ni, nj)
-    return len(visited_cafe) if visited_cafe else -1
+            # 지도 안이고 안먹어본 디저트라면
+            if 0 <= ni < N and 0 <= nj < N:
+                if board[ni][nj] not in visited_cafe:
+                    visited_cafe.append(board[ni][nj])
+                    DFS(ni, nj, next_d)
+                    visited_cafe.pop() # 백트래킹 해줘야함
 
 T = int(input())
-T = 1
-for tc in range(1, T+1):
 
+for tc in range(1, T+1):
     # 지도의 크기
     N = int(input())
     board = [list(map(int, input().split())) for _ in range(N)]
     visited = [[False] * N for _ in range(N)]
-
     max_ans = -1 # 기본값으로 -1을 준다.
 
-    for si in range(N):
-        for sj in range(N):
-            # is_valid = False # 최종 형태가 사각형인지 확인한다. 이거 쓸모있나
-            # 방문했던 카페 리스트
-            visited_cafe = []
-            visited_cafe.append(board[si][sj])
-            tmp_ans = DFS(si, sj)
-            max_ans = max(max_ans, tmp_ans)
-
+    for si in range(N-2): # 사각형 공간 확보를 위해 범위 제한
+        for sj in range(1, N-1):
+            visited_cafe = [board[si][sj]]
+            DFS(si, sj, 0)
     print(f"#{tc} {max_ans}")
