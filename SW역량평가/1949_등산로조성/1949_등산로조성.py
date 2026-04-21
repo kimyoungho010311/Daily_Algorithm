@@ -44,6 +44,8 @@ def DFS(i, j, h, dist, is_cut):
             # 그냥 내려갈 수 있는 경우
             if board[ni][nj] < h:
                 visited[ni][nj] = True
+                # 반드시 인자값을 is_cut을 넘겨줘야한다. False를 넘겨줄 경우 계속해서 새로 선언하는것이기 때문에
+                # 플래그 변수가 작동하지 못한다.
                 DFS(ni, nj, board[ni][nj], dist + 1, is_cut)
                 visited[ni][nj] = False # 백트래킹
 
