@@ -19,7 +19,7 @@ for tc in range(1, T+1):
         I, J, count, direction = map(int, input().split())
         micros.append([I, J, count, direction])
 
-
+    
     # 이제 M번만큼 시간이 지날 떄 군집들의 상태를 계산한다.
     for _ in range(M):
         for m in micros:
